@@ -70,6 +70,8 @@ namespace Sample.ServiceBusFiltering.Sender
                     var encoded = Encoding.UTF8.GetBytes(json);
                     var brokeredMessage = new Message(encoded);
                     brokeredMessage.UserProperties.Add("deviceName", message.DeviceId);
+                    brokeredMessage.UserProperties.Add("temp", message.Temperature);
+                    brokeredMessage.UserProperties.Add("unit", message.TemperatureUnit);
                     return brokeredMessage;
                 }).ToList()
             );

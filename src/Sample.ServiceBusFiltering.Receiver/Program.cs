@@ -14,7 +14,8 @@ namespace Sample.ServiceBusFiltering.Receiver
                 .AddJsonFile("appsettings.json", false, false)
                 .Build();
 
-            using (var receiver = new Receiver(config["serviceBus:connectionString"], config["serviceBus:topicName"], config["serviceBus:subscriptionName"]))
+            using (var homereceiver = new Receiver(config["serviceBus:connectionString"], config["serviceBus:topicName"], config["serviceBus:homeSubscriptionName"], ConsoleColor.White))
+            using (var highreceiver = new Receiver(config["serviceBus:connectionString"], config["serviceBus:topicName"], config["serviceBus:highSubscriptionName"], ConsoleColor.Red))
             {
                 Console.WriteLine("Receiving Messages, press return to stop");
                 Console.ReadLine();
@@ -26,7 +27,7 @@ namespace Sample.ServiceBusFiltering.Receiver
     {
         private readonly SubscriptionClient _subscriptionClient;
 
-        public Receiver(string connectionString, string topicName, string subscriptionName)
+        public Receiver(string connectionString, string topicName, string subscriptionName, ConsoleColor textColour)
         {
             _subscriptionClient = new SubscriptionClient(
                 connectionString,
@@ -36,7 +37,8 @@ namespace Sample.ServiceBusFiltering.Receiver
             _subscriptionClient.RegisterMessageHandler(
                 (message, cancellation) => {
                     var alertBody = System.Text.Encoding.UTF8.GetString(message.Body);
-                    Console.WriteLine(alertBody);
+                    Console.ForegroundColor = textColour;
+                    Console.WriteLine($"{subscriptionName} | {alertBody}");
 
                     return Task.CompletedTask;
                 }, 
