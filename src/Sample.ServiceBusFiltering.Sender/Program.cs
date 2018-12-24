@@ -37,15 +37,28 @@ namespace Sample.ServiceBusFiltering.Sender
             _topicClient = new TopicClient(connectionString, topicName);
             _fakeData = new List<DeviceReading>
             {
-                new DeviceReading { DeviceId = "Home", Temperature = 12.5, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 50, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Work", Temperature = 10.2, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 50, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Home", Temperature = 12.7, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 51, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Home", Temperature = 12.7, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 52, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Home", Temperature = 12.8, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 53, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Home", Temperature = 12.7, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 54, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Home", Temperature = 12.7, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 55, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Work", Temperature = 10.0, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 55, 00, new TimeSpan(0, 0, 0)) },
-                new DeviceReading { DeviceId = "Home", Temperature = 12.9, TemperatureUnit = "Celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 56, 00, new TimeSpan(0, 0, 0)) }
+                new DeviceReading { DeviceId = "home", Temperature = 12.5, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 50, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "work", Temperature = 50.5, TemperatureUnit = "fahrenheit", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 50, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 51, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 52, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.8, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 53, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 54, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 55, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "work", Temperature = 50.0, TemperatureUnit = "fahrenheit", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 55, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.9, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 56, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 13.0, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 57, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.9, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 58, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 22, 59, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 31.0, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 00, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "work", Temperature = 50.0, TemperatureUnit = "fahrenheit", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 00, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.9, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 51, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.8, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 52, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 53, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.6, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 54, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.5, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 55, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "work", Temperature = 51.0, TemperatureUnit = "fahrenheit", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 55, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 56, 00, new TimeSpan(0, 0, 0)) },
+                new DeviceReading { DeviceId = "home", Temperature = 12.7, TemperatureUnit = "celsius", Timestamp = new DateTimeOffset(2018, 12, 23, 23, 56, 00, new TimeSpan(0, 0, 0)) }
             };
         }
 
