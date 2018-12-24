@@ -1,0 +1,181 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namespace_name": {
+            "defaultValue": "sampleDeviceReadings",
+            "type": "string"
+        },     
+        "topic_name": {
+            "defaultValue": "temperature",
+            "type": "string"
+        }
+    },
+  "variables": {
+    "namespace_name": "[parameters('namespace_name')]",
+    "send_authorizationRule_name": "[concat(parameters('namespace_name'), '/', 'sender')]",
+    "listen_authorizationRule_name": "[concat(parameters('namespace_name'), '/', 'listener')]",
+    "topic_name": "[concat(parameters('namespace_name'), '/', parameters('topic_name'))]",
+    "home_subscription": "homesubscription",
+    "home_subscription_name": "[concat(parameters('namespace_name'), '/', parameters('topic_name'), '/', variables('home_subscription'))]",
+    "home_subscription_rule_name": "[concat(parameters('namespace_name'), '/', parameters('topic_name'), '/', variables('home_subscription'), '/', 'homefilter')]",
+    "high_subscription": "highsubscription",
+    "high_subscription_name": "[concat(parameters('namespace_name'), '/', parameters('topic_name'), '/', variables('high_subscription'))]",
+    "high_subscription_rule_name": "[concat(parameters('namespace_name'), '/', parameters('topic_name'), '/', variables('high_subscription'), '/', 'highvaluefilter')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "name": "[variables('namespace_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "tags": {},
+      "scale": null,
+      "properties": {
+        "serviceBusEndpoint": "[concat('https://', variables('namespace_name'),'.servicebus.windows.net:443/')]",
+        "status": "Active"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "name": "[variables('send_authorizationRule_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "rights": [
+          "Listen",
+          "Manage",
+          "Send"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('namespace_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "name": "[variables('listen_authorizationRule_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "rights": [
+          "Listen"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('namespace_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "name": "[variables('topic_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "defaultMessageTimeToLive": "PT1H",
+        "maxSizeInMegabytes": 5120,
+        "requiresDuplicateDetection": false,
+        "duplicateDetectionHistoryTimeWindow": "PT10M",
+        "enableBatchedOperations": true,
+        "status": "Active",
+        "supportOrdering": true,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+        "enablePartitioning": false,
+        "enableExpress": false
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('namespace_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "name": "[variables('home_subscription_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "lockDuration": "PT30S",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "PT1H",
+        "deadLetteringOnMessageExpiration": true,
+        "deadLetteringOnFilterEvaluationExceptions": false,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": false,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('namespace_name'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('namespace_name'), parameters('topic_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "name": "[variables('high_subscription_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "lockDuration": "PT30S",
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "PT1H",
+        "deadLetteringOnMessageExpiration": true,
+        "deadLetteringOnFilterEvaluationExceptions": false,
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enableBatchedOperations": false,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespace_name'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('namespace_name'), parameters('topic_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
+      "name": "[variables('home_subscription_rule_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "filterType": "CorrelationFilter",
+        "correlationFilter": {
+          "properties": {
+            "devicename": "home"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespace_name'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('namespace_name'), parameters('topic_name'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions/', parameters('namespace_name'), parameters('topic_name'), variables('home_subscription'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
+      "name": "[variables('high_subscription_rule_name')]",
+      "apiVersion": "2017-04-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "filterType": "SqlFilter",
+        "sqlFilter": {
+          "sqlExpression": "temp >= 30 AND unit = 'celsius'"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespace_name'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('namespace_name'), parameters('topic_name'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics/subscriptions/', parameters('namespace_name'), parameters('topic_name'), variables('high_subscription'))]"
+      ]
+    }
+  ]
+}
